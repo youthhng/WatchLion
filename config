@@ -1,0 +1,10 @@
+# The amount of time in seconds that the program waits before
+# parsing the email account again
+refreshDelay 30
+
+# Tells the program how much information to print to the console while running
+# verbose >= 0 : Print when an attempted submission to eLion passes or fails
+# verbose >= 1 : Print extra information about watch list emails received
+# verbose >= 2 : Print extra information about the status of the program
+# verbose >= 3 : Print lots of information. Mostly for developer use.
+verbose 2
