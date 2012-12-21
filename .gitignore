@@ -46,3 +46,9 @@ Thumbs.db
 # Temporary files from gedit #
 ##############################
 *~
+
+# config file #
+###############
+# The user is expected to modify this file.
+# The version saved to the repository is .defaultconfig
+config
