@@ -10,30 +10,40 @@ import email
 import imaplib
 import json
 import re
+import time
 
+# Parses the gmail account looking for notifications from the course watch list
+# If a notification is found, the function returns the course number
+# If no notifications are found, the function returns -1
+# For other errors, the function returns -2
 def parseGmail():
     # Set default variables
     verbose = 0
 
     # Set some variables from a config file
-    for line in open('config'):
-        splitLine = line.split()
-        if len(splitLine) == 2:
-            if splitLine[0] == 'verbose':
-                verbose = int(splitLine[1])
-                if verbose >= 3 : print "verbose = %d" % verbose
-
+    try:
+        for line in open('config'):
+            splitLine = line.split()
+            if len(splitLine) == 2:
+                if splitLine[0] == 'verbose':
+                    verbose = int(splitLine[1])
+                    if verbose >= 3 : print "verbose = %d" % verbose
+    except IOError as e:
+        print("({})".format(e))
+        print("Try running 'python setup.py' in WatchLion's main directory.")
+        return -2
+    
     # Read the users gmail credentials from .gmail.json
     credentialJsonString = ""
     try:        
         # Read the JSON string from the JSON file
-        credentialFile = open('gmailParser/.gmail.json')
+        credentialFile = open('etc/.gmail.json')
         credentialJsonString = credentialFile.read()
         credentialFile.close()
     except IOError as e:
         print("({})".format(e))
         print("Try running 'python setup.py' in WatchLion's main directory.")
-        exit()
+        return -2
     credentials = json.loads(credentialJsonString)
 
 
@@ -64,10 +74,26 @@ def parseGmail():
 
         # If the pattern was matched, and a seat was open...
         if searchResult:
+            # Check the time the email was sent
+            datePattern = re.compile("DATE: (.*) EST")
+            dateSearch = re.search(datePattern, messageString)
+            if dateSearch:
+                if verbose >= 3: print dateSearch.group(0)
+                print dateSearch.group(1)
+                sentDate = time.strptime(dateSearch.group(1), "%a, %d %b %Y %H:%M:%S")
+                currentTime = time.time()
+                emailTime = time.mktime(sentDate)
+                diffTime = ((currentTime - emailTime)/60)
+                if verbose >= 2:
+                    if diffTime > 119:
+                        print "Recieved %d hours ago" % (diffTime/60)
+                    else:
+                        print "Recieved %d minutes ago" % diffTime
+        
             # Alert the user
+            if verbose >= 3 : print "%s\n\n" % messageString
             if verbose >= 1 : print searchResult.group(0)
             courseNumber = int(searchResult.group(1))
-            if verbose >= 1 : print "Attempting to schedule course number %d..." % (courseNumber)
             return courseNumber
         
     mail.close()
