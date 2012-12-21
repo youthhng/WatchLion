@@ -3,8 +3,8 @@
 # verbose >= 1 : Print extra information about watch list emails received
 # verbose >= 2 : Print extra information about the status of the program
 # verbose >= 3 : Print lots of information. Mostly for developer use.
-verbose 2
+verbose 3
 
 # The amount of time in seconds that the program waits before
 # parsing the email account again
-refreshDelay 30
+refreshDelay 3

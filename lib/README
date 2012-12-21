@@ -1,4 +1,3 @@
-This directory contains the scripts that are to be used to parse a gmail inbox to watch for a notice from the course watch list.
+This directory contains the scripts that are to be used as modules for WatchLion
 
 parseGmail.py - parses the user's inbox for an email from "REGISTRAR" alerting him or her of an opening from the course watch list
-.gmail.json   - contains the user's gmail login information
