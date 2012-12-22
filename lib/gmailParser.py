@@ -34,7 +34,7 @@ def parseGmail(userName, password):
         print("Try running 'python setup.py' in WatchLion's main directory.")
         return -2
 
-    if verbose >= 2 : print "Logging into gmail as %s..." % (credentials['gmailName'])
+    if verbose >= 2 : print "Logging into gmail as %s..." % userName
 
     # Log in and select the inbox
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
