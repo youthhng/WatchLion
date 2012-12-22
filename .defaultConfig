@@ -3,7 +3,13 @@
 # verbose >= 1 : Print extra information about watch list emails received
 # verbose >= 2 : Print extra information about the status of the program
 # verbose >= 3 : Print lots of information. Mostly for developer use.
-verbose 3
+verbose 1
+
+# The number of attemps the program will make at completing eLion registration
+# if it is failing for reasons other than the section being full. 
+# Note: If this is less than 1, the eLion registration will not be
+#       attempted at all.
+attemptsPerAlert 3
 
 # The amount of time in seconds that the program waits before
 # parsing the email account again
