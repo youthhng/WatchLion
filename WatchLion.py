@@ -14,6 +14,7 @@ from lib import gmailParser
 from lib import eLionAutomation
 
 # Set default variables
+attemptsPerAlert = 3
 refreshDelay = 10
 verbose = 0
 
@@ -23,6 +24,9 @@ try:
     for line in open('config'):
         splitLine = line.split()
         if len(splitLine) == 2:
+            if splitLine[0] == 'attemptsPerAlert'
+                attemptsPerAlert = int(splitLine[1])
+                if verbose >= 3 : print "attemptsPerAlert = %d" & attemptsPerAlert
             if splitLine[0] == 'refreshDelay':
                 refreshDelay = float(splitLine[1])
                 if verbose >= 3 : print "refreshDelay = %f" % refreshDelay
@@ -52,11 +56,15 @@ while running:
     if courseNumber > 0:
         # Try to schedule the course
         if verbose >= 1 : print "Attempting to schedule course number %d..." % (courseNumber)
-        didRegister, message = eLionAutomation.registerForClass(courseNumber, semester, credentials['eLionName'], credentials['eLionPass'])
-        if didRegister:
-            print "Registration successful!"
-        else:
-            print "Registration failed."
-            print message
+        attemptsRemaining = attemptsPerAlert
+        attemptCompleted = False
+        while (not attemptCompleted) and attemptsRemaining > 0:
+            didRegister, message, attemptCompleted = eLionAutomation.registerForClass(courseNumber, semester, credentials['eLionName'], credentials['eLionPass'])
+            attemptsRemaining = attemptsRemaining - 1
+            if didRegister:
+                print "Registration successful!"
+            else:
+                print "Registration failed."
+                print message
         
     
