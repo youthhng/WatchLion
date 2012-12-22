@@ -8,7 +8,6 @@
 
 import email
 import imaplib
-import json
 import re
 import time
 
@@ -16,7 +15,9 @@ import time
 # If a notification is found, the function returns the course number
 # If no notifications are found, the function returns -1
 # For other errors, the function returns -2
-def parseGmail():
+# userName is the gmail userName to use
+# password is the password for the userName
+def parseGmail(userName, password):
     # Set default variables
     verbose = 0
 
@@ -32,26 +33,12 @@ def parseGmail():
         print("({})".format(e))
         print("Try running 'python setup.py' in WatchLion's main directory.")
         return -2
-    
-    # Read the users gmail credentials from .gmail.json
-    credentialJsonString = ""
-    try:        
-        # Read the JSON string from the JSON file
-        credentialFile = open('etc/.gmail.json')
-        credentialJsonString = credentialFile.read()
-        credentialFile.close()
-    except IOError as e:
-        print("({})".format(e))
-        print("Try running 'python setup.py' in WatchLion's main directory.")
-        return -2
-    credentials = json.loads(credentialJsonString)
-
 
     if verbose >= 2 : print "Logging into gmail as %s..." % (credentials['gmailName'])
 
     # Log in and select the inbox
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
-    mail.login(credentials['gmailName'], credentials['gmailPass'])
+    mail.login(userName, password)
     mail.list()
     mail.select('inbox')
 
@@ -60,7 +47,7 @@ def parseGmail():
     typ, data = mail.search(None, 'FROM', '"REGISTRAR"')
 
     # Create a regular expression looking for a watch list notice.
-    pattern = re.compile("\((\d+)\) has a seat opening.")
+    pattern = re.compile("\w+ \d+ section \d+ for (\w+) \d+ \((\d+)\) has a seat opening.")
 
     # Iterate through all of REGISTRAR's messages
     for num in data[0].split():
@@ -93,9 +80,8 @@ def parseGmail():
             # Alert the user
             if verbose >= 3 : print "%s\n\n" % messageString
             if verbose >= 1 : print searchResult.group(0)
-            courseNumber = int(searchResult.group(1))
-            return courseNumber
+            return (searchResult.group(1), int(searchResult.group(2)))
         
     mail.close()
     mail.logout()
-    return -1
+    return ("", -1)
