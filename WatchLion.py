@@ -24,7 +24,7 @@ try:
     for line in open('config'):
         splitLine = line.split()
         if len(splitLine) == 2:
-            if splitLine[0] == 'attemptsPerAlert'
+            if splitLine[0] == 'attemptsPerAlert':
                 attemptsPerAlert = int(splitLine[1])
                 if verbose >= 3 : print "attemptsPerAlert = %d" & attemptsPerAlert
             if splitLine[0] == 'refreshDelay':
